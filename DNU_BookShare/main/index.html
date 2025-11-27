@@ -1,0 +1,1902 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DNU BookShare - Chia sẻ Sách Sinh viên</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --secondary: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --dark: #1f2937;
+            --light: #f3f4f6;
+            --border: #e5e7eb;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            padding: 20px 40px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-radius: 15px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+        }
+
+        .logo-text h1 {
+            color: var(--dark);
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .logo-text p {
+            color: #6b7280;
+            font-size: 12px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--dark);
+            border: 2px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-success {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        /* Notification Badge */
+        .notification-badge {
+            position: relative;
+            cursor: pointer;
+            padding: 8px 12px;
+            background: var(--light);
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .notification-badge:hover {
+            background: var(--border);
+        }
+
+        .badge-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--danger);
+            color: white;
+            border-radius: 10px;
+            padding: 2px 6px;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        /* Search Bar */
+        .search-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 16px;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .filter-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        select {
+            padding: 12px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        /* Main Content */
+        .main-content {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 30px;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            height: fit-content;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            padding: 12px 15px;
+            margin-bottom: 5px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-menu li:hover {
+            background: var(--light);
+            transform: translateX(5px);
+        }
+
+        .sidebar-menu li.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Book Grid */
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .book-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .book-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        .favorite-btn {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: white;
+            border: none;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            transition: all 0.3s;
+        }
+
+        .favorite-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .favorite-btn.active {
+            color: var(--danger);
+        }
+
+        .book-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            color: white;
+            position: relative;
+        }
+
+        .book-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .badge-new { background: var(--secondary); }
+        .badge-borrow { background: var(--primary); }
+        .badge-sell { background: var(--warning); }
+
+        .book-info {
+            padding: 20px;
+        }
+
+        .book-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 8px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .book-author {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .book-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border);
+        }
+
+        .book-condition {
+            font-size: 12px;
+            color: var(--secondary);
+            font-weight: 600;
+        }
+
+        .book-price {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideIn 0.3s;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            padding: 25px 30px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #6b7280;
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* User Profile */
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 15px;
+            background: var(--light);
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        /* Notification List */
+        .notification-item {
+            padding: 15px;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .notification-item:hover {
+            background: var(--light);
+        }
+
+        .notification-item.unread {
+            background: #eff6ff;
+            font-weight: 600;
+        }
+
+        .notification-item.unread::before {
+            content: '●';
+            color: var(--primary);
+            margin-right: 10px;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: white;
+            font-size: 18px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .books-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <div class="logo-icon">📚</div>
+                <div class="logo-text">
+                    <h1>DNU BookShare</h1>
+                    <p>Cộng đồng chia sẻ sách sinh viên</p>
+                </div>
+            </div>
+            <div class="header-actions" id="headerActions">
+                <button class="btn btn-primary" onclick="showModal('loginModal')">Đăng nhập</button>
+                <button class="btn btn-secondary" onclick="showModal('registerModal')">Đăng ký</button>
+            </div>
+        </div>
+
+        <!-- Search Section -->
+        <div class="search-section">
+            <div class="search-bar">
+                <input type="text" class="search-input" id="searchInput" 
+                       placeholder="Tìm kiếm sách theo tên, tác giả, môn học...">
+                <button class="btn btn-primary" onclick="searchBooks()">🔍 Tìm kiếm</button>
+            </div>
+            <div class="filter-section">
+                <select id="facultyFilter" onchange="searchBooks()">
+                    <option value="">Tất cả khoa</option>
+                    <option value="CNTT">Công nghệ thông tin</option>
+                    <option value="KT">Kinh tế</option>
+                    <option value="NN">Ngoại ngữ</option>
+                    <option value="SP">Sư phạm</option>
+                </select>
+                <select id="conditionFilter" onchange="searchBooks()">
+                    <option value="">Tình trạng</option>
+                    <option value="NEW">Mới</option>
+                    <option value="LIKE_NEW">Như mới</option>
+                    <option value="GOOD">Tốt</option>
+                    <option value="OLD">Cũ</option>
+                </select>
+                <select id="typeFilter" onchange="searchBooks()">
+                    <option value="">Hình thức</option>
+                    <option value="BORROW">Cho mượn</option>
+                    <option value="SELL">Bán</option>
+                    <option value="EXCHANGE">Trao đổi</option>
+                </select>
+                <select id="sortFilter" onchange="searchBooks()">
+                    <option value="newest">Mới nhất</option>
+                    <option value="popular">Phổ biến</option>
+                    <option value="price_asc">Giá tăng dần</option>
+                    <option value="price_desc">Giá giảm dần</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <h3 style="margin-bottom: 20px;">Danh mục</h3>
+                <ul class="sidebar-menu">
+                    <li class="active" onclick="showSection('home')">🏠 Trang chủ</li>
+                    <li onclick="showSection('myBooks')">📖 Sách của tôi</li>
+                    <li onclick="showSection('favorites')">❤️ Yêu thích</li>
+                    <li onclick="showSection('transactions')">📝 Giao dịch</li>
+                    <li onclick="showSection('borrowed')">📚 Đang mượn</li>
+                    <li onclick="showSection('notifications')">🔔 Thông báo <span id="notifBadge"></span></li>
+                    <li onclick="showSection('profile')">👤 Hồ sơ</li>
+                    <li onclick="showSection('admin')" id="adminMenu" style="display:none">⚙️ Quản trị</li>
+                </ul>
+            </div>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <div id="booksGrid" class="books-grid">
+                    <div class="loading">Đang tải dữ liệu...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Đăng nhập</h2>
+                <button class="close-btn" onclick="closeModal('loginModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label class="form-label">Email sinh viên</label>
+                        <input type="email" class="form-control" id="loginEmail" 
+                               placeholder="example@dainam.edu.vn" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Mật khẩu</label>
+                        <input type="password" class="form-control" id="loginPassword" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width:100%">Đăng nhập</button>
+                    <p style="text-align:center; margin-top:15px; color:#6b7280;">
+                        Chưa có tài khoản? 
+                        <a href="#" onclick="closeModal('loginModal'); showModal('registerModal')" 
+                           style="color:var(--primary)">Đăng ký ngay</a>
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div class="modal" id="registerModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Đăng ký tài khoản</h2>
+                <button class="close-btn" onclick="closeModal('registerModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form onsubmit="handleRegister(event)">
+                    <div class="form-group">
+                        <label class="form-label">Họ và tên</label>
+                        <input type="text" class="form-control" id="registerName" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Mã sinh viên</label>
+                        <input type="text" class="form-control" id="registerStudentId" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email sinh viên (@dainam.edu.vn)</label>
+                        <input type="email" class="form-control" id="registerEmail" 
+                               placeholder="example@dainam.edu.vn" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Khoa</label>
+                        <select class="form-control" id="registerFaculty" required>
+                            <option value="">Chọn khoa</option>
+                            <option value="CNTT">Công nghệ thông tin</option>
+                            <option value="KT">Kinh tế</option>
+                            <option value="NN">Ngoại ngữ</option>
+                            <option value="SP">Sư phạm</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Mật khẩu</label>
+                        <input type="password" class="form-control" id="registerPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Xác nhận mật khẩu</label>
+                        <input type="password" class="form-control" id="registerConfirmPassword" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width:100%">Đăng ký</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Book Modal -->
+    <div class="modal" id="addBookModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Đăng sách mới</h2>
+                <button class="close-btn" onclick="closeModal('addBookModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form onsubmit="handleAddBook(event)">
+                    <div class="form-group">
+                        <label class="form-label">Tên sách</label>
+                        <input type="text" class="form-control" id="bookTitle" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tác giả</label>
+                        <input type="text" class="form-control" id="bookAuthor" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Môn học</label>
+                        <input type="text" class="form-control" id="bookSubject" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Khoa</label>
+                        <select class="form-control" id="bookFaculty" required>
+                            <option value="CNTT">Công nghệ thông tin</option>
+                            <option value="KT">Kinh tế</option>
+                            <option value="NN">Ngoại ngữ</option>
+                            <option value="SP">Sư phạm</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Mô tả</label>
+                        <textarea class="form-control" id="bookDescription"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tình trạng</label>
+                        <select class="form-control" id="bookCondition" required>
+                            <option value="NEW">Mới</option>
+                            <option value="LIKE_NEW">Như mới</option>
+                            <option value="GOOD">Tốt</option>
+                            <option value="FAIR">Khá</option>
+                            <option value="OLD">Cũ</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Hình thức (Có thể chọn nhiều)</label>
+                        <div style="display:flex; gap:15px; margin-top:10px;">
+                            <label style="display:flex; align-items:center; gap:5px;">
+                                <input type="checkbox" id="typeBorrow" value="BORROW">
+                                Cho mượn
+                            </label>
+                            <label style="display:flex; align-items:center; gap:5px;">
+                                <input type="checkbox" id="typeSell" value="SELL">
+                                Bán
+                            </label>
+                            <label style="display:flex; align-items:center; gap:5px;">
+                                <input type="checkbox" id="typeExchange" value="EXCHANGE">
+                                Trao đổi
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group" id="priceGroup" style="display:none;">
+                        <label class="form-label">Giá bán (VNĐ)</label>
+                        <input type="number" class="form-control" id="bookPrice">
+                    </div>
+                    <div class="form-group" id="borrowDaysGroup" style="display:none;">
+                        <label class="form-label">Số ngày cho mượn</label>
+                        <input type="number" class="form-control" id="bookBorrowDays" value="7">
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width:100%">Đăng sách</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Book Detail Modal -->
+    <div class="modal" id="bookDetailModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="detailBookTitle"></h2>
+                <button class="close-btn" onclick="closeModal('bookDetailModal')">&times;</button>
+            </div>
+            <div class="modal-body" id="bookDetailContent">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data Storage - sử dụng localStorage để lưu trữ dữ liệu lâu dài
+        let currentUser = null;
+        let users = JSON.parse(localStorage.getItem('users')) || [
+            {
+                userId: 'admin001',
+                email: 'admin@dainam.edu.vn',
+                password: 'admin123',
+                fullName: 'Admin DNU',
+                studentId: 'ADMIN001',
+                faculty: 'CNTT',
+                role: 'ADMIN',
+                trustScore: 5.0,
+                favoriteBooks: []
+            }
+        ];
+
+        let books = JSON.parse(localStorage.getItem('books')) || [
+            {
+                bookId: 'BOOK001',
+                ownerId: 'admin001',
+                title: 'Lập trình hướng đối tượng với Java',
+                author: 'Nguyễn Văn A',
+                subject: 'Lập trình Java',
+                faculty: 'CNTT',
+                description: 'Sách giáo trình môn OOP, còn mới 95%',
+                condition: 'LIKE_NEW',
+                types: ['BORROW', 'SELL'],
+                price: 150000,
+                borrowDays: 14,
+                status: 'AVAILABLE',
+                viewCount: 45,
+                isVisible: true
+            },
+            {
+                bookId: 'BOOK002',
+                ownerId: 'admin001',
+                title: 'Cấu trúc dữ liệu và giải thuật',
+                author: 'Trần Thị B',
+                subject: 'Cấu trúc dữ liệu',
+                faculty: 'CNTT',
+                description: 'Sách cũ nhưng nội dung đầy đủ',
+                condition: 'GOOD',
+                types: ['BORROW'],
+                borrowDays: 7,
+                status: 'AVAILABLE',
+                viewCount: 32,
+                isVisible: true
+            },
+            {
+                bookId: 'BOOK003',
+                ownerId: 'admin001',
+                title: 'Nguyên lý Marketing',
+                author: 'Philip Kotler',
+                subject: 'Marketing',
+                faculty: 'KT',
+                description: 'Sách chưa dùng, bản tiếng Việt',
+                condition: 'NEW',
+                types: ['SELL', 'EXCHANGE'],
+                price: 200000,
+                status: 'AVAILABLE',
+                viewCount: 28,
+                isVisible: true
+            }
+        ];
+
+        let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+        let notifications = JSON.parse(localStorage.getItem('notifications')) || [];
+
+        // Lưu data vào localStorage
+        function saveData() {
+            localStorage.setItem('users', JSON.stringify(users));
+            localStorage.setItem('books', JSON.stringify(books));
+            localStorage.setItem('transactions', JSON.stringify(transactions));
+            localStorage.setItem('notifications', JSON.stringify(notifications));
+            console.log('✅ Đã lưu dữ liệu vào localStorage');
+        }
+
+        // Initialize
+        window.onload = function() {
+            // Check if logged in from localStorage
+            const savedUser = localStorage.getItem('currentUser');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                updateUIAfterLogin();
+            }
+            displayBooks();
+            updateNotificationBadge();
+        };
+
+        // Modal Functions
+        function showModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // Authentication
+        function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            const user = users.find(u => u.email === email && u.password === password);
+
+            if (user) {
+                currentUser = user;
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                closeModal('loginModal');
+                updateUIAfterLogin();
+                alert('Đăng nhập thành công!');
+                displayBooks();
+                updateNotificationBadge();
+            } else {
+                alert('Email hoặc mật khẩu không chính xác!');
+            }
+        }
+
+        function handleRegister(event) {
+            event.preventDefault();
+            const name = document.getElementById('registerName').value;
+            const studentId = document.getElementById('registerStudentId').value;
+            const email = document.getElementById('registerEmail').value;
+            const faculty = document.getElementById('registerFaculty').value;
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('registerConfirmPassword').value;
+
+            if (!email.endsWith('@dainam.edu.vn')) {
+                alert('Email phải có đuôi @dainam.edu.vn');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                alert('Mật khẩu xác nhận không khớp!');
+                return;
+            }
+
+            if (users.find(u => u.email === email)) {
+                alert('Email đã tồn tại!');
+                return;
+            }
+
+            const newUser = {
+                userId: 'USER' + Date.now(),
+                email,
+                password,
+                fullName: name,
+                studentId,
+                faculty,
+                role: 'STUDENT',
+                trustScore: 5.0,
+                favoriteBooks: []
+            };
+
+            users.push(newUser);
+            saveData();
+            alert('Đăng ký thành công! Vui lòng đăng nhập.');
+            closeModal('registerModal');
+            showModal('loginModal');
+        }
+
+        function updateUIAfterLogin() {
+            const headerActions = document.getElementById('headerActions');
+            headerActions.innerHTML = `
+                <div class="notification-badge" onclick="showSection('notifications')">
+                    🔔
+                    <span class="badge-count" id="headerNotifCount" style="display:none;">0</span>
+                </div>
+                <button class="btn btn-success" onclick="showModal('addBookModal')">
+                    ➕ Đăng sách
+                </button>
+                <div class="user-profile" onclick="showSection('profile')">
+                    <div class="user-avatar">${currentUser.fullName.charAt(0)}</div>
+                    <span class="user-name">${currentUser.fullName}</span>
+                </div>
+                <button class="btn btn-danger" onclick="handleLogout()">Đăng xuất</button>
+            `;
+
+            if (currentUser.role === 'ADMIN') {
+                document.getElementById('adminMenu').style.display = 'block';
+            }
+            
+            updateNotificationBadge();
+        }
+
+        function handleLogout() {
+            currentUser = null;
+            localStorage.removeItem('currentUser');
+            location.reload();
+        }
+
+        // Update notification badge
+        function updateNotificationBadge() {
+            if (!currentUser) return;
+            
+            const unreadNotifs = notifications.filter(n => 
+                n.userId === currentUser.userId && !n.isRead
+            );
+            
+            const count = unreadNotifs.length;
+            const badge = document.getElementById('notifBadge');
+            const headerBadge = document.getElementById('headerNotifCount');
+            
+            if (count > 0) {
+                if (badge) badge.innerHTML = `<span style="background:var(--danger);color:white;padding:2px 6px;border-radius:10px;font-size:11px;margin-left:5px;">${count}</span>`;
+                if (headerBadge) {
+                    headerBadge.textContent = count;
+                    headerBadge.style.display = 'block';
+                }
+            } else {
+                if (badge) badge.innerHTML = '';
+                if (headerBadge) headerBadge.style.display = 'none';
+            }
+        }
+
+        // Toggle favorite
+        function toggleFavorite(event, bookId) {
+            event.stopPropagation();
+            
+            if (!currentUser) {
+                alert('Vui lòng đăng nhập!');
+                return;
+            }
+            
+            const user = users.find(u => u.userId === currentUser.userId);
+            if (!user.favoriteBooks) user.favoriteBooks = [];
+            
+            const index = user.favoriteBooks.indexOf(bookId);
+            if (index > -1) {
+                user.favoriteBooks.splice(index, 1);
+            } else {
+                user.favoriteBooks.push(bookId);
+            }
+            
+            currentUser = user;
+            localStorage.setItem('currentUser', JSON.stringify(user));
+            saveData();
+            
+            // Re-render if in favorites section
+            if (document.querySelector('.sidebar-menu li.active').textContent.includes('Yêu thích')) {
+                showFavorites();
+            } else {
+                displayBooks();
+            }
+        }
+        
+        // Display Books
+        function displayBooks(booksToShow = null) {
+            const booksGrid = document.getElementById('booksGrid');
+            const displayList = booksToShow || books.filter(b => b.isVisible && b.status === 'AVAILABLE');
+            
+            if (displayList.length === 0) {
+                booksGrid.innerHTML = '<div class="loading">Không tìm thấy sách nào</div>';
+                return;
+            }
+            
+            booksGrid.innerHTML = displayList.map(book => {
+                const owner = users.find(u => u.userId === book.ownerId);
+                const isFavorite = currentUser && currentUser.favoriteBooks && currentUser.favoriteBooks.includes(book.bookId);
+                const conditionText = {
+                    'NEW': 'Mới',
+                    'LIKE_NEW': 'Như mới',
+                    'GOOD': 'Tốt',
+                    'FAIR': 'Khá',
+                    'OLD': 'Cũ'
+                };
+                
+                const typeDisplay = book.types.includes('BORROW') ? 
+                    '<span class="book-badge badge-borrow">Cho mượn</span>' :
+                    book.types.includes('SELL') ? 
+                    '<span class="book-badge badge-sell">Bán</span>' : 
+                    '<span class="book-badge badge-new">Trao đổi</span>';
+                
+                return `
+                    <div class="book-card" onclick="showBookDetail('${book.bookId}')">
+                        <button class="favorite-btn ${isFavorite ? 'active' : ''}" 
+                                onclick="toggleFavorite(event, '${book.bookId}')">
+                            ${isFavorite ? '❤️' : '🤍'}
+                        </button>
+                        <div class="book-image">
+                            📖
+                            ${typeDisplay}
+                        </div>
+                        <div class="book-info">
+                            <div class="book-title">${book.title}</div>
+                            <div class="book-author">📝 ${book.author}</div>
+                            <div class="book-author">👤 ${owner ? owner.fullName : 'Unknown'}</div>
+                            <div class="book-meta">
+                                <span class="book-condition">${conditionText[book.condition]}</span>
+                                <span class="book-price">${book.price ? book.price.toLocaleString() + ' đ' : 'Miễn phí'}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Search Books
+        function searchBooks() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const faculty = document.getElementById('facultyFilter').value;
+            const condition = document.getElementById('conditionFilter').value;
+            const type = document.getElementById('typeFilter').value;
+            const sort = document.getElementById('sortFilter').value;
+            
+            let filtered = books.filter(book => {
+                if (!book.isVisible || book.status !== 'AVAILABLE') return false;
+                
+                const matchSearch = !searchTerm || 
+                    book.title.toLowerCase().includes(searchTerm) ||
+                    book.author.toLowerCase().includes(searchTerm) ||
+                    book.subject.toLowerCase().includes(searchTerm);
+                    
+                const matchFaculty = !faculty || book.faculty === faculty;
+                const matchCondition = !condition || book.condition === condition;
+                const matchType = !type || book.types.includes(type);
+                
+                return matchSearch && matchFaculty && matchCondition && matchType;
+            });
+            
+            // Sort
+            if (sort === 'newest') {
+                filtered.reverse();
+            } else if (sort === 'popular') {
+                filtered.sort((a, b) => (b.viewCount || 0) - (a.viewCount || 0));
+            } else if (sort === 'price_asc') {
+                filtered.sort((a, b) => (a.price || 0) - (b.price || 0));
+            } else if (sort === 'price_desc') {
+                filtered.sort((a, b) => (b.price || 0) - (a.price || 0));
+            }
+            
+            displayBooks(filtered);
+        }
+
+        // Show Book Detail
+        function showBookDetail(bookId) {
+            const book = books.find(b => b.bookId === bookId);
+            if (!book) return;
+            
+            const owner = users.find(u => u.userId === book.ownerId);
+            book.viewCount = (book.viewCount || 0) + 1;
+            saveData();
+            
+            const conditionText = {
+                'NEW': 'Mới',
+                'LIKE_NEW': 'Như mới',
+                'GOOD': 'Tốt',
+                'FAIR': 'Khá',
+                'OLD': 'Cũ'
+            };
+            
+            const facultyText = {
+                'CNTT': 'Công nghệ thông tin',
+                'KT': 'Kinh tế',
+                'NN': 'Ngoại ngữ',
+                'SP': 'Sư phạm'
+            };
+            
+            document.getElementById('detailBookTitle').textContent = book.title;
+            
+            let actionButtons = '';
+            if (currentUser && currentUser.userId !== book.ownerId) {
+                if (book.types.includes('BORROW')) {
+                    actionButtons += `<button class="btn btn-primary" onclick="requestBorrow('${bookId}')">Yêu cầu mượn</button>`;
+                }
+                if (book.types.includes('SELL')) {
+                    actionButtons += `<button class="btn btn-success" onclick="requestBuy('${bookId}')">Mua sách</button>`;
+                }
+                if (book.types.includes('EXCHANGE')) {
+                    actionButtons += `<button class="btn btn-secondary" onclick="requestExchange('${bookId}')">Trao đổi</button>`;
+                }
+            } else if (currentUser && currentUser.userId === book.ownerId) {
+                actionButtons = `
+                    <button class="btn btn-warning" onclick="editBook('${bookId}')">Sửa thông tin</button>
+                    <button class="btn btn-danger" onclick="deleteBook('${bookId}')">Xóa sách</button>
+                `;
+            }
+            
+            document.getElementById('bookDetailContent').innerHTML = `
+                <div style="display:grid; gap:20px;">
+                    <div>
+                        <strong>Tác giả:</strong> ${book.author}
+                    </div>
+                    <div>
+                        <strong>Môn học:</strong> ${book.subject}
+                    </div>
+                    <div>
+                        <strong>Khoa:</strong> ${facultyText[book.faculty]}
+                    </div>
+                    <div>
+                        <strong>Tình trạng:</strong> <span style="color:var(--secondary)">${conditionText[book.condition]}</span>
+                    </div>
+                    <div>
+                        <strong>Hình thức:</strong> ${book.types.map(t => {
+                            const typeMap = {'BORROW': 'Cho mượn', 'SELL': 'Bán', 'EXCHANGE': 'Trao đổi'};
+                            return typeMap[t];
+                        }).join(', ')}
+                    </div>
+                    ${book.price ? `<div><strong>Giá:</strong> <span style="color:var(--primary);font-size:20px;font-weight:700">${book.price.toLocaleString()} đ</span></div>` : ''}
+                    ${book.borrowDays ? `<div><strong>Số ngày cho mượn:</strong> ${book.borrowDays} ngày</div>` : ''}
+                    <div>
+                        <strong>Chủ sách:</strong> ${owner ? owner.fullName : 'Unknown'}
+                    </div>
+                    ${owner ? `<div><strong>Đánh giá tín nhiệm:</strong> ⭐ ${owner.trustScore}/5.0</div>` : ''}
+                    <div>
+                        <strong>Lượt xem:</strong> ${book.viewCount || 0}
+                    </div>
+                    ${book.description ? `<div><strong>Mô tả:</strong><p style="margin-top:10px;color:#6b7280;">${book.description}</p></div>` : ''}
+                    <div style="display:flex; gap:10px; margin-top:20px;">
+                        ${actionButtons}
+                    </div>
+                </div>
+            `;
+            
+            showModal('bookDetailModal');
+        }
+
+        // Add Book
+        function handleAddBook(event) {
+            event.preventDefault();
+            
+            if (!currentUser) {
+                alert('Vui lòng đăng nhập!');
+                return;
+            }
+            
+            const types = [];
+            if (document.getElementById('typeBorrow').checked) types.push('BORROW');
+            if (document.getElementById('typeSell').checked) types.push('SELL');
+            if (document.getElementById('typeExchange').checked) types.push('EXCHANGE');
+            
+            if (types.length === 0) {
+                alert('Vui lòng chọn ít nhất một hình thức!');
+                return;
+            }
+            
+            const newBook = {
+                bookId: 'BOOK' + Date.now(),
+                ownerId: currentUser.userId,
+                title: document.getElementById('bookTitle').value,
+                author: document.getElementById('bookAuthor').value,
+                subject: document.getElementById('bookSubject').value,
+                faculty: document.getElementById('bookFaculty').value,
+                description: document.getElementById('bookDescription').value,
+                condition: document.getElementById('bookCondition').value,
+                types: types,
+                price: types.includes('SELL') ? parseInt(document.getElementById('bookPrice').value) : null,
+                borrowDays: types.includes('BORROW') ? parseInt(document.getElementById('bookBorrowDays').value) : null,
+                status: 'AVAILABLE',
+                viewCount: 0,
+                isVisible: true,
+                createdAt: new Date().toISOString()
+            };
+            
+            books.push(newBook);
+            saveData();
+            
+            alert('Đăng sách thành công!');
+            closeModal('addBookModal');
+            event.target.reset();
+            displayBooks();
+        }
+
+        // Toggle price/borrow fields
+        document.addEventListener('DOMContentLoaded', function() {
+            const typeSell = document.getElementById('typeSell');
+            const typeBorrow = document.getElementById('typeBorrow');
+            const priceGroup = document.getElementById('priceGroup');
+            const borrowDaysGroup = document.getElementById('borrowDaysGroup');
+            
+            if (typeSell) {
+                typeSell.addEventListener('change', function() {
+                    priceGroup.style.display = this.checked ? 'block' : 'none';
+                });
+            }
+            
+            if (typeBorrow) {
+                typeBorrow.addEventListener('change', function() {
+                    borrowDaysGroup.style.display = this.checked ? 'block' : 'none';
+                });
+            }
+        });
+
+        // Request actions
+        function requestBorrow(bookId) {
+            if (!currentUser) {
+                alert('Vui lòng đăng nhập!');
+                return;
+            }
+            
+            const book = books.find(b => b.bookId === bookId);
+            const owner = users.find(u => u.userId === book.ownerId);
+            
+            const transaction = {
+                transactionId: 'TXN' + Date.now(),
+                bookId: bookId,
+                requesterId: currentUser.userId,
+                ownerId: book.ownerId,
+                type: 'BORROW',
+                status: 'PENDING',
+                createdAt: new Date().toISOString()
+            };
+            
+            transactions.push(transaction);
+            
+            const notification = {
+                notificationId: 'NOTIF' + Date.now(),
+                userId: book.ownerId,
+                message: `${currentUser.fullName} muốn mượn sách "${book.title}"`,
+                type: 'BORROW_REQUEST',
+                isRead: false,
+                createdAt: new Date().toISOString(),
+                relatedId: transaction.transactionId
+            };
+            
+            notifications.push(notification);
+            saveData();
+            
+            alert('Đã gửi yêu cầu mượn sách! Vui lòng chờ chủ sách xác nhận.');
+            closeModal('bookDetailModal');
+        }
+
+        function requestBuy(bookId) {
+            if (!currentUser) {
+                alert('Vui lòng đăng nhập!');
+                return;
+            }
+            
+            const book = books.find(b => b.bookId === bookId);
+            
+            const transaction = {
+                transactionId: 'TXN' + Date.now(),
+                bookId: bookId,
+                requesterId: currentUser.userId,
+                ownerId: book.ownerId,
+                type: 'BUY',
+                status: 'PENDING',
+                price: book.price,
+                createdAt: new Date().toISOString()
+            };
+            
+            transactions.push(transaction);
+            
+            const notification = {
+                notificationId: 'NOTIF' + Date.now(),
+                userId: book.ownerId,
+                message: `${currentUser.fullName} muốn mua sách "${book.title}" với giá ${book.price.toLocaleString()} đ`,
+                type: 'BUY_REQUEST',
+                isRead: false,
+                createdAt: new Date().toISOString(),
+                relatedId: transaction.transactionId
+            };
+            
+            notifications.push(notification);
+            saveData();
+            
+            alert('Đã gửi yêu cầu mua sách! Vui lòng chờ chủ sách xác nhận.');
+            closeModal('bookDetailModal');
+        }
+
+        function requestExchange(bookId) {
+            if (!currentUser) {
+                alert('Vui lòng đăng nhập!');
+                return;
+            }
+            
+            alert('Chức năng trao đổi sách đang được phát triển!');
+        }
+
+        // Section Navigation
+        function showSection(section) {
+            // Update active menu
+            document.querySelectorAll('.sidebar-menu li').forEach(li => li.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            const contentArea = document.querySelector('.content-area');
+            
+            switch(section) {
+                case 'home':
+                    contentArea.innerHTML = '<div id="booksGrid" class="books-grid"></div>';
+                    displayBooks();
+                    break;
+                case 'myBooks':
+                    showMyBooks();
+                    break;
+                case 'favorites':
+                    showFavorites();
+                    break;
+                case 'transactions':
+                    showTransactions();
+                    break;
+                case 'borrowed':
+                    showBorrowed();
+                    break;
+                case 'notifications':
+                    showNotifications();
+                    break;
+                case 'profile':
+                    showProfile();
+                    break;
+                case 'admin':
+                    showAdmin();
+                    break;
+            }
+        }
+
+        function showMyBooks() {
+            if (!currentUser) {
+                alert('Vui lòng đăng nhập!');
+                return;
+            }
+            
+            const myBooks = books.filter(b => b.ownerId === currentUser.userId);
+            const contentArea = document.querySelector('.content-area');
+            
+            contentArea.innerHTML = `
+                <div>
+                    <h2 style="margin-bottom:20px;">Sách của tôi (${myBooks.length})</h2>
+                    <div id="booksGrid" class="books-grid"></div>
+                </div>
+            `;
+            
+            displayBooks(myBooks);
+        }
+
+        function showFavorites() {
+            if (!currentUser) {
+                alert('Vui lòng đăng nhập!');
+                return;
+            }
+            
+            const favoriteBooks = books.filter(b => 
+                currentUser.favoriteBooks && currentUser.favoriteBooks.includes(b.bookId)
+            );
+            
+            const contentArea = document.querySelector('.content-area');
+            contentArea.innerHTML = `
+                <div>
+                    <h2 style="margin-bottom:20px;">Sách yêu thích (${favoriteBooks.length})</h2>
+                    <div id="booksGrid" class="books-grid"></div>
+                </div>
+            `;
+            
+            displayBooks(favoriteBooks);
+        }
+
+        function showTransactions() {
+            if (!currentUser) {
+                alert('Vui lòng đăng nhập!');
+                return;
+            }
+            
+            const myTransactions = transactions.filter(t => 
+                t.requesterId === currentUser.userId || t.ownerId === currentUser.userId
+            );
+            
+            const contentArea = document.querySelector('.content-area');
+            contentArea.innerHTML = `
+                <div style="background:white; padding:30px; border-radius:15px;">
+                    <h2 style="margin-bottom:20px;">Giao dịch (${myTransactions.length})</h2>
+                    <div id="transactionList"></div>
+                </div>
+            `;
+            
+            const transactionList = document.getElementById('transactionList');
+            
+            if (myTransactions.length === 0) {
+                transactionList.innerHTML = '<p style="color:#6b7280; text-align:center; padding:40px;">Chưa có giao dịch nào</p>';
+                return;
+            }
+            
+            transactionList.innerHTML = myTransactions.map(t => {
+                const book = books.find(b => b.bookId === t.bookId);
+                const otherUser = users.find(u => 
+                    u.userId === (t.requesterId === currentUser.userId ? t.ownerId : t.requesterId)
+                );
+                
+                const statusColor = {
+                    'PENDING': 'var(--warning)',
+                    'APPROVED': 'var(--secondary)',
+                    'COMPLETED': 'var(--primary)',
+                    'REJECTED': 'var(--danger)'
+                };
+                
+                const statusText = {
+                    'PENDING': 'Chờ xác nhận',
+                    'APPROVED': 'Đã chấp nhận',
+                    'COMPLETED': 'Hoàn thành',
+                    'REJECTED': 'Đã từ chối'
+                };
+                
+                return `
+                    <div style="padding:20px; border:2px solid var(--border); border-radius:10px; margin-bottom:15px;">
+                        <div style="display:flex; justify-content:space-between; align-items:start;">
+                            <div style="flex:1;">
+                                <h3 style="margin-bottom:10px;">${book ? book.title : 'Sách đã xóa'}</h3>
+                                <p style="color:#6b7280; margin-bottom:5px;">
+                                    ${t.requesterId === currentUser.userId ? 'Với' : 'Từ'}: ${otherUser ? otherUser.fullName : 'Unknown'}
+                                </p>
+                                <p style="color:#6b7280;">Loại: ${t.type === 'BORROW' ? 'Mượn sách' : 'Mua sách'}</p>
+                                ${t.price ? `<p style="color:var(--primary); font-weight:700; margin-top:5px;">${t.price.toLocaleString()} đ</p>` : ''}
+                            </div>
+                            <div style="text-align:right;">
+                                <span style="background:${statusColor[t.status]}; color:white; padding:6px 12px; border-radius:20px; font-size:12px; font-weight:600;">
+                                    ${statusText[t.status]}
+                                </span>
+                                ${t.ownerId === currentUser.userId && t.status === 'PENDING' ? `
+                                    <div style="margin-top:15px; display:flex; gap:10px;">
+                                        <button class="btn btn-success" style="padding:8px 16px; font-size:12px;" onclick="approveTransaction('${t.transactionId}')">Chấp nhận</button>
+                                        <button class="btn btn-danger" style="padding:8px 16px; font-size:12px;" onclick="rejectTransaction('${t.transactionId}')">Từ chối</button>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function approveTransaction(transactionId) {
+            const transaction = transactions.find(t => t.transactionId === transactionId);
+            transaction.status = 'APPROVED';
+            
+            const book = books.find(b => b.bookId === transaction.bookId);
+            const requester = users.find(u => u.userId === transaction.requesterId);
+            
+            const notification = {
+                notificationId: 'NOTIF' + Date.now(),
+                userId: transaction.requesterId,
+                message: `Yêu cầu ${transaction.type === 'BORROW' ? 'mượn' : 'mua'} sách "${book.title}" đã được chấp nhận!`,
+                type: 'TRANSACTION_APPROVED',
+                isRead: false,
+                createdAt: new Date().toISOString()
+            };
+            
+            notifications.push(notification);
+            saveData();
+            
+            alert('Đã chấp nhận giao dịch!');
+            showTransactions();
+        }
+
+        function rejectTransaction(transactionId) {
+            const transaction = transactions.find(t => t.transactionId === transactionId);
+            transaction.status = 'REJECTED';
+            
+            const book = books.find(b => b.bookId === transaction.bookId);
+            
+            const notification = {
+                notificationId: 'NOTIF' + Date.now(),
+                userId: transaction.requesterId,
+                message: `Yêu cầu ${transaction.type === 'BORROW' ? 'mượn' : 'mua'} sách "${book.title}" đã bị từ chối`,
+                type: 'TRANSACTION_REJECTED',
+                isRead: false,
+                createdAt: new Date().toISOString()
+            };
+            
+            notifications.push(notification);
+            saveData();
+            
+            alert('Đã từ chối giao dịch!');
+            showTransactions();
+        }
+
+        function showBorrowed() {
+            if (!currentUser) {
+                alert('Vui lòng đăng nhập!');
+                return;
+            }
+            
+            const borrowed = transactions.filter(t => 
+                t.requesterId === currentUser.userId && 
+                t.type === 'BORROW' && 
+                t.status === 'APPROVED'
+            );
+            
+            const contentArea = document.querySelector('.content-area');
+            contentArea.innerHTML = `
+                <div style="background:white; padding:30px; border-radius:15px;">
+                    <h2 style="margin-bottom:20px;">Sách đang mượn (${borrowed.length})</h2>
+                    <div id="borrowedList"></div>
+                </div>
+            `;
+            
+            const borrowedList = document.getElementById('borrowedList');
+            
+            if (borrowed.length === 0) {
+                borrowedList.innerHTML = '<p style="color:#6b7280; text-align:center; padding:40px;">Bạn chưa mượn sách nào</p>';
+                return;
+            }
+            
+            borrowedList.innerHTML = borrowed.map(t => {
+                const book = books.find(b => b.bookId === t.bookId);
+                const owner = users.find(u => u.userId === t.ownerId);
+                
+                return `
+                    <div style="padding:20px; border:2px solid var(--border); border-radius:10px; margin-bottom:15px; display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <h3 style="margin-bottom:10px;">${book ? book.title : 'Sách đã xóa'}</h3>
+                            <p style="color:#6b7280;">Chủ sách: ${owner ? owner.fullName : 'Unknown'}</p>
+                            <p style="color:#6b7280;">Số ngày mượn: ${book ? book.borrowDays : 0} ngày</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="returnBook('${t.transactionId}')">Trả sách</button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function returnBook(transactionId) {
+            const transaction = transactions.find(t => t.transactionId === transactionId);
+            transaction.status = 'COMPLETED';
+            
+            const book = books.find(b => b.bookId === transaction.bookId);
+            
+            const notification = {
+                notificationId: 'NOTIF' + Date.now(),
+                userId: transaction.ownerId,
+                message: `${currentUser.fullName} đã trả sách "${book.title}"`,
+                type: 'BOOK_RETURNED',
+                isRead: false,
+                createdAt: new Date().toISOString()
+            };
+            
+            notifications.push(notification);
+            saveData();
+            
+            alert('Đã xác nhận trả sách!');
+            showBorrowed();
+        }
+
+        function showNotifications() {
+            if (!currentUser) {
+                alert('Vui lòng đăng nhập!');
+                return;
+            }
+            
+            const myNotifications = notifications.filter(n => n.userId === currentUser.userId);
+            
+            const contentArea = document.querySelector('.content-area');
+            contentArea.innerHTML = `
+                <div style="background:white; padding:30px; border-radius:15px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                        <h2>Thông báo (${myNotifications.length})</h2>
+                        <button class="btn btn-secondary" onclick="markAllAsRead()">Đánh dấu đã đọc tất cả</button>
+                    </div>
+                    <div id="notificationList"></div>
+                </div>
+            `;
+            
+            const notificationList = document.getElementById('notificationList');
+            
+            if (myNotifications.length === 0) {
+                notificationList.innerHTML = '<p style="color:#6b7280; text-align:center; padding:40px;">Không có thông báo nào</p>';
+                return;
+            }
+            
+            notificationList.innerHTML = myNotifications.reverse().map(n => `
+                <div class="notification-item ${n.isRead ? '' : 'unread'}" onclick="markAsRead('${n.notificationId}')">
+                    <p style="margin-bottom:5px;">${n.message}</p>
+                    <small style="color:#6b7280;">${new Date(n.createdAt).toLocaleString('vi-VN')}</small>
+                </div>
+            `).join('');
+        }
+
+        function markAsRead(notificationId) {
+            const notification = notifications.find(n => n.notificationId === notificationId);
+            notification.isRead = true;
+            saveData();
+            updateNotificationBadge();
+            showNotifications();
+        }
+
+        function markAllAsRead() {
+            notifications.forEach(n => {
+                if (n.userId === currentUser.userId) {
+                    n.isRead = true;
+                }
+            });
+            saveData();
+            updateNotificationBadge();
+            showNotifications();
+        }
+
+        function showProfile() {
+            if (!currentUser) {
+                alert('Vui lòng đăng nhập!');
+                return;
+            }
+            
+            const myBooks = books.filter(b => b.ownerId === currentUser.userId);
+            const myTransactions = transactions.filter(t => 
+                t.requesterId === currentUser.userId || t.ownerId === currentUser.userId
+            );
+            
+            const facultyText = {
+                'CNTT': 'Công nghệ thông tin',
+                'KT': 'Kinh tế',
+                'NN': 'Ngoại ngữ',
+                'SP': 'Sư phạm'
+            };
+            
+            const contentArea = document.querySelector('.content-area');
+            contentArea.innerHTML = `
+                <div style="background:white; padding:30px; border-radius:15px;">
+                    <div style="text-align:center; margin-bottom:30px;">
+                        <div style="width:100px; height:100px; border-radius:50%; background:var(--primary); display:flex; align-items:center; justify-content:center; color:white; font-size:40px; font-weight:700; margin:0 auto 20px;">
+                            ${currentUser.fullName.charAt(0)}
+                        </div>
+                        <h2>${currentUser.fullName}</h2>
+                        <p style="color:#6b7280; margin-top:5px;">${currentUser.email}</p>
+                        <p style="color:#6b7280;">Mã SV: ${currentUser.studentId}</p>
+                    </div>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value">${myBooks.length}</div>
+                            <div class="stat-label">Sách đã đăng</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${myTransactions.length}</div>
+                            <div class="stat-label">Giao dịch</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${currentUser.trustScore}/5.0</div>
+                            <div class="stat-label">Đánh giá</div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top:30px;">
+                        <h3 style="margin-bottom:15px;">Thông tin cá nhân</h3>
+                        <div style="display:grid; gap:15px;">
+                            <div style="padding:15px; background:var(--light); border-radius:8px;">
+                                <strong>Khoa:</strong> ${facultyText[currentUser.faculty]}
+                            </div>
+                            <div style="padding:15px; background:var(--light); border-radius:8px;">
+                                <strong>Vai trò:</strong> ${currentUser.role === 'ADMIN' ? 'Quản trị viên' : 'Sinh viên'}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showAdmin() {
+            if (!currentUser || currentUser.role !== 'ADMIN') {
+                alert('Bạn không có quyền truy cập!');
+                return;
+            }
+            
+            const contentArea = document.querySelector('.content-area');
+            contentArea.innerHTML = `
+                <div style="background:white; padding:30px; border-radius:15px;">
+                    <h2 style="margin-bottom:20px;">Quản trị hệ thống</h2>
+                    
+                    <div class="stats-grid" style="margin-bottom:30px;">
+                        <div class="stat-card">
+                            <div class="stat-value">${users.length}</div>
+                            <div class="stat-label">Người dùng</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${books.length}</div>
+                            <div class="stat-label">Sách</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${transactions.length}</div>
+                            <div class="stat-label">Giao dịch</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${notifications.length}</div>
+                            <div class="stat-label">Thông báo</div>
+                        </div>
+                    </div>
+                    
+                    <div style="display:grid; gap:20px;">
+                        <div>
+                            <h3 style="margin-bottom:15px;">Quản lý người dùng</h3>
+                            <div id="userList"></div>
+                        </div>
+                        
+                        <div>
+                            <h3 style="margin-bottom:15px;">Quản lý sách</h3>
+                            <div id="adminBookList"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Display users
+            const userList = document.getElementById('userList');
+            userList.innerHTML = users.map(u => `
+                <div style="padding:15px; border:2px solid var(--border); border-radius:10px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <strong>${u.fullName}</strong> (${u.studentId})
+                        <br>
+                        <small style="color:#6b7280;">${u.email} - ${u.role}</small>
+                    </div>
+                    <div style="display:flex; gap:10px;">
+                        ${u.role !== 'ADMIN' ? `
+                            <button class="btn btn-warning" style="padding:8px 16px; font-size:12px;" onclick="toggleUserStatus('${u.userId}')">
+                                ${u.isBlocked ? 'Mở khóa' : 'Khóa'}
+                            </button>
+                        ` : ''}
+                    </div>
+                </div>
+            `).join('');
+            
+            // Display books
+            const adminBookList = document.getElementById('adminBookList');
+            adminBookList.innerHTML = books.map(b => {
+                const owner = users.find(u => u.userId === b.ownerId);
+                return `
+                    <div style="padding:15px; border:2px solid var(--border); border-radius:10px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <strong>${b.title}</strong>
+                            <br>
+                            <small style="color:#6b7280;">Chủ: ${owner ? owner.fullName : 'Unknown'} - Trạng thái: ${b.status}</small>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-secondary" style="padding:8px 16px; font-size:12px;" onclick="toggleBookVisibility('${b.bookId}')">
+                                ${b.isVisible ? 'Ẩn' : 'Hiện'}
+                            </button>
+                            <button class="btn btn-danger" style="padding:8px 16px; font-size:12px;" onclick="adminDeleteBook('${b.bookId}')">
+                                Xóa
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function toggleUserStatus(userId) {
+            const user = users.find(u => u.userId === userId);
+            user.isBlocked = !user.isBlocked;
+            saveData();
+            alert(user.isBlocked ? 'Đã khóa người dùng!' : 'Đã mở khóa người dùng!');
+            showAdmin();
+        }
+
+        function toggleBookVisibility(bookId) {
+            const book = books.find(b => b.bookId === bookId);
+            book.isVisible = !book.isVisible;
+            saveData();
+            alert(book.isVisible ? 'Đã hiện sách!' : 'Đã ẩn sách!');
+            showAdmin();
+        }
+
+        function adminDeleteBook(bookId) {
+            if (confirm('Bạn có chắc chắn muốn xóa sách này?')) {
+                const index = books.findIndex(b => b.bookId === bookId);
+                books.splice(index, 1);
+                saveData();
+                alert('Đã xóa sách!');
+                showAdmin();
+            }
+        }
+
+        function deleteBook(bookId) {
+            if (!currentUser) return;
+            
+            if (confirm('Bạn có chắc chắn muốn xóa sách này?')) {
+                const index = books.findIndex(b => b.bookId === bookId);
+                books.splice(index, 1);
+                saveData();
+                alert('Đã xóa sách!');
+                closeModal('bookDetailModal');
+                showMyBooks();
+            }
+        }
+
+        function editBook(bookId) {
+            alert('Chức năng sửa sách đang được phát triển!');
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('active');
+            }
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(event) {
+            // ESC to close modals
+            if (event.key === 'Escape') {
+                document.querySelectorAll('.modal').forEach(modal => {
+                    modal.classList.remove('active');
+                });
+            }
+            
+            // Ctrl/Cmd + K to focus search
+            if ((event.ctrlKey || event.metaKey) && event.key === 'k') {
+                event.preventDefault();
+                document.getElementById('searchInput').focus();
+            }
+        });
+
+        // Auto-save reminder
+        setInterval(function() {
+            if (currentUser) {
+                console.log('🔄 Auto-saving data...');
+                saveData();
+            }
+        }, 60000); // Save every minute
+
+        console.log('✅ DNU BookShare loaded successfully!');
+        console.log('📊 Statistics:', {
+            users: users.length,
+            books: books.length,
+            transactions: transactions.length,
+            notifications: notifications.length
+        });
+    </script>
+</body>
+</html>
